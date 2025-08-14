@@ -24,6 +24,10 @@ public class PostService {
         return posts.values();
     }
 
+    public Optional<Post> findById(long postId) {
+        return Optional.ofNullable(posts.get(postId));
+    }
+
     public Post create(Post post) {
         if (post.getDescription() == null || post.getDescription().isBlank()) {
             throw new ConditionsNotMetException("Описание не может быть пустым");
