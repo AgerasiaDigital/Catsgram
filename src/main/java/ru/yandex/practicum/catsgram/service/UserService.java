@@ -29,4 +29,24 @@ public class UserService {
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());
     }
+    public UserDto createUser(NewUserRequest request) {
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new ConditionsNotMetException("Имейл должен быть указан");
+        }
+
+        Optional<User> alreadyExistUser = userRepository.findByEmail(request.getEmail());
+        if (alreadyExistUser.isPresent()) {
+            throw new DuplicatedDataException("Данный имейл уже используется");
+        }
+
+        User user = UserMapper.mapToUser(request);
+        user = userRepository.save(user);
+        return UserMapper.mapToUserDto(user);
+    }
+
+    public UserDto getUserById(long userId) {
+        return userRepository.findById(userId)
+                .map(UserMapper::mapToUserDto)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден с ID: " + userId));
+    }
 }

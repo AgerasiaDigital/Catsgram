@@ -20,4 +20,22 @@ public final class UserMapper {
         dto.setRegistrationDate(Instant.now());
         return dto;
     }
+    public static User mapToUser(NewUserRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+        user.setRegistrationDate(Instant.now());
+        return user;
+    }
+
+    public static User updateUserFields(User user, UpdateUserRequest request) {
+        if (request.hasEmail()) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.hasUsername()) {
+            user.setUsername(request.getUsername());
+        }
+        return user;
+    }
 }

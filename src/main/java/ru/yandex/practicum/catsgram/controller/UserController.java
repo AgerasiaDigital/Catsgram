@@ -22,4 +22,15 @@ public class UserController {
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@RequestBody NewUserRequest userRequest) {
+        return userService.createUser(userRequest);
+    }
+
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto getUserById(@PathVariable("userId") long userId) {
+        return userService.getUserById(userId);
+    }
 }
