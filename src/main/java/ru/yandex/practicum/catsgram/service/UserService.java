@@ -7,10 +7,16 @@ import ru.yandex.practicum.catsgram.mapper.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+
+    public Optional<ru.yandex.practicum.catsgram.model.User> findUserById(long id) {
+        // Реализация поиска пользователя по ID
+        return userRepository.findById(id);
+    }
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;

@@ -14,13 +14,9 @@ public class UserRowMapper implements RowMapper<User> {
     public User mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User();
         user.setId(resultSet.getLong("id"));
-        user.setUsername(resultSet.getString("username"));
-        user.setEmail(resultSet.getString("email"));
-        user.setPassword(resultSet.getString("password"));
-
-        Timestamp registrationDate = resultSet.getTimestamp("registration_date");
-        user.setRegistrationDate(registrationDate.toInstant());
-
+        user.setUsername(resultSet.getString("name")); // name вместо username
+        user.setEmail("default@example.com"); // или удалить поле email из User
+        // убрать поля password и registrationDate
         return user;
     }
 }
