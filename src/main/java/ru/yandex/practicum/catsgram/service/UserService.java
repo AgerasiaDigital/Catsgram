@@ -2,26 +2,29 @@ package ru.yandex.practicum.catsgram.service;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.catsgram.dal.UserRepository;
+import ru.yandex.practicum.catsgram.dto.NewUserRequest; // добавить
 import ru.yandex.practicum.catsgram.dto.UserDto;
+import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException; // добавить
+import ru.yandex.practicum.catsgram.exception.DuplicatedDataException; // добавить
+import ru.yandex.practicum.catsgram.exception.NotFoundException; // добавить
 import ru.yandex.practicum.catsgram.mapper.UserMapper;
+import ru.yandex.practicum.catsgram.model.User; // добавить
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    public Optional<ru.yandex.practicum.catsgram.model.User> findUserById(long id) {
-        // Реализация поиска пользователя по ID
-        return userRepository.findById(id);
-    }
-
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    public Optional<User> findUserById(long id) {
+        return userRepository.findById(id);
+    }
 
     public List<UserDto> getUsers() {
         return userRepository.findAll()
@@ -29,6 +32,7 @@ public class UserService {
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());
     }
+
     public UserDto createUser(NewUserRequest request) {
         if (request.getEmail() == null || request.getEmail().isEmpty()) {
             throw new ConditionsNotMetException("Имейл должен быть указан");
