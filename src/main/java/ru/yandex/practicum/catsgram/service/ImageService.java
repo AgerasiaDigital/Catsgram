@@ -63,4 +63,42 @@ public class ImageService {
 
     private Image saveImage(long postId, MultipartFile file) {
         Post post = postService.findById(postId)
-                .orElseThrow(() -> new ConditionsNotMetException("Указанный пост не найден
+                .orElseThrow(() -> new ConditionsNotMetException("Указанный пост не найден"));
+
+        // Создаем директорию, если она не существует
+        Path directory = Paths.get(imageDirectory);
+        try {
+            if (!Files.exists(directory)) {
+                Files.createDirectories(directory);
+            }
+        } catch (IOException e) {
+            throw new ImageFileException("Не удалось создать директорию для хранения изображений", e);
+        }
+
+        // Получаем оригинальное имя файла
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        // Проверяем валидность имени файла
+        if (originalFilename.contains("..")) {
+            throw new ImageFileException("Некорректное имя файла: " + originalFilename);
+        }
+
+        // Генерируем уникальное имя файла
+        String filename = Instant.now().toEpochMilli() + "_" + originalFilename;
+        Path filePath = directory.resolve(filename);
+
+        // Сохраняем файл на диск
+        try {
+            Files.copy(file.getInputStream(), filePath);
+        } catch (IOException e) {
+            throw new ImageFileException("Не удалось сохранить файл: " + originalFilename, e);
+        }
+
+        Image image = new Image();
+        image.setPostId(postId);
+        image.setOriginalFileName(originalFilename);
+        image.setFilePath(filePath.toString());
+
+        return imageRepository.save(image);
+    }
+}
